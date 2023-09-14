@@ -102,6 +102,7 @@ invokeWithCallback callback event context = do
           
   result <- callback lambdaOptions
   -- Flush output to insure output goes into CloudWatch logs
+  flushOutput
 
   putStrLn "### got result"
     
@@ -122,9 +123,7 @@ invokeWithCallback callback event context = do
          Right value -> do
            putStrLn "### got value: some Right"
            pure value
-
   putStrLn "### got result: output flushed"
-  flushOutput
   pure v
 
 variableNotSet :: Error.EnvironmentVariableNotSet -> IO a
