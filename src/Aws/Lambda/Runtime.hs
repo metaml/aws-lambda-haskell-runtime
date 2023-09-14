@@ -72,6 +72,7 @@ invokeAndRun ::
   Context.Context context ->
   IO ()
 invokeAndRun callback manager lambdaApi event context = do
+  putStrLn "### in invokeAndRun"
   result <- invokeWithCallback callback event context
   putStrLn "### calling Publish.result"
   putStrLn $ "###   lambdaApi=" <> unpack lambdaApi
