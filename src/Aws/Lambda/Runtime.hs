@@ -36,6 +36,9 @@ runLambda initializeCustomContext callback = do
   customContext <- initializeCustomContext
   customContextRef <- newIORef customContext
   context <- Context.initialize @context customContextRef `catch` errorParsing `catch` variableNotSet
+
+  putStrLn "begin forever loop in runLambda"
+
   forever $ do
     lambdaApi <- Environment.apiEndpoint `catch` variableNotSet
     event <- ApiInfo.fetchEvent manager lambdaApi `catch` errorParsing
@@ -43,8 +46,6 @@ runLambda initializeCustomContext callback = do
     print event
     -- Purposefully shadowing to prevent using the initial "empty" context
     context <- Context.setEventData context event
-
-    print context
 
     ( ( ( invokeAndRun callback manager lambdaApi event context
             `Checked.catch` \err -> Publish.parsingError err lambdaApi context manager
