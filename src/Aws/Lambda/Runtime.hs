@@ -106,6 +106,9 @@ invokeWithCallback callback event context = do
   putStrLn "### got result"
   
   flushOutput
+
+  putStrLn "### got result: output flushed"
+  
   case result of
     Left lambdaError -> case lambdaError of
       Runtime.StandaloneLambdaError (StandaloneLambdaResponseBodyPlain err) -> do
