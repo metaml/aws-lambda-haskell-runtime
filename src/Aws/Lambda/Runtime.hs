@@ -120,6 +120,7 @@ invokeWithCallback callback event context = do
         putStrLn $ "### error(ALB)=" <> show (encode err)
         throw $ Error.Invocation $ encode err
     Right value -> do
+      putStrLn "### got value: some Right"
       pure value
 
 variableNotSet :: Error.EnvironmentVariableNotSet -> IO a
