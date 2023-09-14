@@ -74,6 +74,8 @@ invokeAndRun ::
 invokeAndRun callback manager lambdaApi event context = do
   result <- invokeWithCallback callback event context
   putStrLn "### calling Publish.result"
+  putStrLn $ "###   lambdaApi=" <> unpack lambdaApi
+  putStrLn $ "###   ApiInfo.Event=" <> show event
   Publish.result result lambdaApi context manager
     `catch` \err -> Publish.invocationError err lambdaApi context manager
 
