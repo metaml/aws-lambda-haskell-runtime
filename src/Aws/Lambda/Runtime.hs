@@ -107,13 +107,17 @@ invokeWithCallback callback event context = do
   flushOutput
   case result of
     Left lambdaError -> case lambdaError of
-      Runtime.StandaloneLambdaError (StandaloneLambdaResponseBodyPlain err) ->
+      Runtime.StandaloneLambdaError (StandaloneLambdaResponseBodyPlain err) -> do
+        putStrLn $ "### error(Standalone Plain)=" <> show err
         throw $ Error.Invocation $ encode err
-      Runtime.StandaloneLambdaError (StandaloneLambdaResponseBodyJson err) ->
+      Runtime.StandaloneLambdaError (StandaloneLambdaResponseBodyJson err) -> do
+        putStrLn $ "### error(Standalone Json)=" <> show err        
         throw $ Error.Invocation err
-      Runtime.APIGatewayLambdaError err ->
+      Runtime.APIGatewayLambdaError err -> do
+        putStrLn $ "### error(Gateway)=" <> show (encode err)
         throw $ Error.Invocation $ encode err
-      Runtime.ALBLambdaError err ->
+      Runtime.ALBLambdaError err -> do
+        putStrLn $ "### error(ALB)=" <> show (encode err)
         throw $ Error.Invocation $ encode err
     Right value -> do
       pure value
