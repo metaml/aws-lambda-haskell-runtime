@@ -40,8 +40,11 @@ runLambda initializeCustomContext callback = do
     lambdaApi <- Environment.apiEndpoint `catch` variableNotSet
     event <- ApiInfo.fetchEvent manager lambdaApi `catch` errorParsing
 
+    print event
     -- Purposefully shadowing to prevent using the initial "empty" context
     context <- Context.setEventData context event
+
+    print context
 
     ( ( ( invokeAndRun callback manager lambdaApi event context
             `Checked.catch` \err -> Publish.parsingError err lambdaApi context manager
