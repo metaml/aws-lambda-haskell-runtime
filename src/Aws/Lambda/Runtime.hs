@@ -37,13 +37,12 @@ runLambda initializeCustomContext callback = do
   customContextRef <- newIORef customContext
   context <- Context.initialize @context customContextRef `catch` errorParsing `catch` variableNotSet
 
-  putStrLn "begin forever loop in runLambda"
-
   forever $ do
     lambdaApi <- Environment.apiEndpoint `catch` variableNotSet
     event <- ApiInfo.fetchEvent manager lambdaApi `catch` errorParsing
 
-    print event
+    print $ "### event=" <> show event
+    
     -- Purposefully shadowing to prevent using the initial "empty" context
     context <- Context.setEventData context event
 
@@ -74,7 +73,7 @@ invokeAndRun ::
   IO ()
 invokeAndRun callback manager lambdaApi event context = do
   result <- invokeWithCallback callback event context
-
+  putStrLn "### calling Publish.result"
   Publish.result result lambdaApi context manager
     `catch` \err -> Publish.invocationError err lambdaApi context manager
 
@@ -94,8 +93,14 @@ invokeWithCallback callback event context = do
             executionUuid = "", -- DirectCall doesnt use UUID
             contextObject = context
           }
+
+  print $ "### handlerName=" <> show handlerName
+          
   result <- callback lambdaOptions
   -- Flush output to insure output goes into CloudWatch logs
+
+  putStrLn "### got result"
+  
   flushOutput
   case result of
     Left lambdaError -> case lambdaError of
@@ -107,7 +112,7 @@ invokeWithCallback callback event context = do
         throw $ Error.Invocation $ encode err
       Runtime.ALBLambdaError err ->
         throw $ Error.Invocation $ encode err
-    Right value ->
+    Right value -> do
       pure value
 
 variableNotSet :: Error.EnvironmentVariableNotSet -> IO a
