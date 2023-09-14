@@ -110,20 +110,26 @@ invokeWithCallback callback event context = do
          Left lambdaError -> case lambdaError of
            Runtime.StandaloneLambdaError (StandaloneLambdaResponseBodyPlain err) -> do
              putStrLn $ "### error(Standalone Plain)=" <> show err
+             flushOutput
              throw $ Error.Invocation $ encode err
            Runtime.StandaloneLambdaError (StandaloneLambdaResponseBodyJson err) -> do
-             putStrLn $ "### error(Standalone Json)=" <> show err        
+             putStrLn $ "### error(Standalone Json)=" <> show err
+             flushOutput             
              throw $ Error.Invocation err
            Runtime.APIGatewayLambdaError err -> do
              putStrLn $ "### error(Gateway)=" <> show (encode err)
+             flushOutput             
              throw $ Error.Invocation $ encode err
            Runtime.ALBLambdaError err -> do
              putStrLn $ "### error(ALB)=" <> show (encode err)
+             flushOutput             
              throw $ Error.Invocation $ encode err
          Right value -> do
            putStrLn "### got value: some Right"
+           flushOutput           
            pure value
   putStrLn "### got result: output flushed"
+  flushOutput             
   pure v
 
 variableNotSet :: Error.EnvironmentVariableNotSet -> IO a
