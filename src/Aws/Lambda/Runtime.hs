@@ -105,7 +105,7 @@ invokeWithCallback callback event context = do
 
   putStrLn "### got result"
   
-  flushOutput
+  -- flushOutput
 
   putStrLn "### got result: output flushed"
   
