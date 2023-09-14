@@ -41,7 +41,7 @@ runLambda initializeCustomContext callback = do
     lambdaApi <- Environment.apiEndpoint `catch` variableNotSet
     event <- ApiInfo.fetchEvent manager lambdaApi `catch` errorParsing
 
-    print $ "### event=" <> show event
+    putStrLn $ "### event=" <> show event
     
     -- Purposefully shadowing to prevent using the initial "empty" context
     context <- Context.setEventData context event
@@ -96,7 +96,8 @@ invokeWithCallback callback event context = do
             contextObject = context
           }
 
-  print $ "### handlerName=" <> show handlerName
+  putStrLn $ "### handlerName=" <> show handlerName
+  putStrLn $ "### event=" <> (show $ ApiInfo.event event)
           
   result <- callback lambdaOptions
   -- Flush output to insure output goes into CloudWatch logs
